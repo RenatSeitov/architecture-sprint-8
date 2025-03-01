@@ -1,6 +1,6 @@
 from fastapi import HTTPException, status
 from keycloak.exceptions import KeycloakAuthenticationError
-from api.config import keycloak_openid, keycloak_admin
+from api.config import keycloak_openid
 from api.models import Report
 
 REQUIRED_ROLES=[
@@ -16,20 +16,11 @@ class AuthService:
         Optionally, check if user has required roles.
         """
         try:
-            user_info = keycloak_openid.userinfo(token)
+            user_info = keycloak_openid.introspect(f"Bearer {token}")
+            print(user_info)
             if not user_info:
                 raise HTTPException(
                     status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token"
-                )
-
-            user_id = keycloak_admin.get_user_id(username=user_info["preferred_username"])
-
-            user_roles = keycloak_admin.get_user_roles(user_id)
-
-            if not any(role in REQUIRED_ROLES for role in user_roles):
-                raise HTTPException(
-                    status_code=status.HTTP_403_FORBIDDEN,
-                    detail="User does not have required roles"
                 )
 
             return Report(
@@ -37,6 +28,7 @@ class AuthService:
                 email=user_info.get("email"),
                 full_name=user_info.get("name"),
             )
+            return user_info
         except KeycloakAuthenticationError as exc:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
