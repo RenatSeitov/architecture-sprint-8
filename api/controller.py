@@ -1,3 +1,5 @@
+import random
+import string
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from api.models import Report
@@ -7,6 +9,16 @@ from typing import List
 # Initialize HTTPBearer security dependency
 bearer_scheme = HTTPBearer()
 
+def generate_random_report_data() -> dict:
+    """
+    Генерация случайных данных для отчёта
+    """
+    return {
+        "report_id": random.randint(1000, 9999),
+        "title": f"Report {random.choice(string.ascii_uppercase)}",
+        "data": [random.randint(1, 100) for _ in range(10)],
+        "summary": "This is a summary of the report data."
+    }
 
 class AuthController:
 
@@ -39,9 +51,8 @@ class AuthController:
                 detail="Invalid token",
                 headers={"WWW-Authenticate": "Bearer"},
             )
+        
+        report_data = generate_random_report_data()
             
 
-        return [
-                    {"id": 1, "content": "Report 1"},
-                    {"id": 2, "content": "Report 2"}
-                ]
+        return report_data

@@ -3,9 +3,24 @@ from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from api.models import Report
 from api.controller import AuthController
 from api.config import get_openid
+from fastapi.middleware.cors import CORSMiddleware
+
+origins = [
+    "http://localhost:3000",
+    "http://frontend:3000",
+]
 
 # Initialize the FastAPI app
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,         
+    allow_credentials=True,        
+    allow_methods=["*"],          
+    allow_headers=["*"],           
+)
+
 
 # Initialize the HTTPBearer scheme for authentication
 bearer_scheme = HTTPBearer()
