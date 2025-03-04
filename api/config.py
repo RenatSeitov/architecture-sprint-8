@@ -21,8 +21,8 @@ keycloak_openid = KeycloakOpenID(
     realm_name=settings.keycloak_realm,
     client_id=settings.keycloak_client_id,
     client_secret_key=settings.keycloak_client_secret,
+    verify=True
 )
-
 
 def get_openid_config():
     return keycloak_openid.well_known()

@@ -29,7 +29,7 @@ bearer_scheme = HTTPBearer()
 keycloak_openid = get_openid()
 
 # Define the root endpoint
-@app.get("/reports", response_model=list[Report])
+@app.get("/reports")
 async def protected_endpoint(
     credentials: HTTPAuthorizationCredentials = Depends(bearer_scheme),
 ):

@@ -4,28 +4,16 @@ from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from api.models import Report
 from api.service import AuthService
-from typing import List
 
 # Initialize HTTPBearer security dependency
 bearer_scheme = HTTPBearer()
-
-def generate_random_report_data() -> dict:
-    """
-    Генерация случайных данных для отчёта
-    """
-    return {
-        "report_id": random.randint(1000, 9999),
-        "title": f"Report {random.choice(string.ascii_uppercase)}",
-        "data": [random.randint(1, 100) for _ in range(10)],
-        "summary": "This is a summary of the report data."
-    }
 
 class AuthController:
 
     @staticmethod
     def protected_endpoint(
         credentials: HTTPAuthorizationCredentials = Depends(bearer_scheme),
-    ) ->List[Report]:
+    ) ->Report:
         """
         Access a protected resource that requires valid token authentication.
 
@@ -52,7 +40,14 @@ class AuthController:
                 headers={"WWW-Authenticate": "Bearer"},
             )
         
-        report_data = generate_random_report_data()
-            
+                        
+        report_data = {
+                "report_id": random.randint(1000, 9999),
+                "title": f"Report {random.choice(string.ascii_uppercase)}",
+                "data": [random.randint(1, 100) for _ in range(10)],
+                "summary": "This is a summary of the report data."
+            }
+        
 
-        return report_data
+
+        return Report(**report_data)
